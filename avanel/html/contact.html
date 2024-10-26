@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Επικοινωνία | AVANEL</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script defer src="../js/script.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="../assets/images/ΛΟΓΟΤΥΠΟ.jpg" alt="Λογότυπο AVANEL" style="width: auto; height: 50px;">
+                </a>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Αρχική</a></li>
+                    <li><a href="about.html">Σχετικά Με Εμάς</a></li>
+                    <li><a href="services.html">Υπηρεσίες</a></li>
+                    <li><a href="contact.html">Επικοινωνία</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="contact-section">
+        <div class="container">
+            <h1>Επικοινωνήστε Μαζί μας</h1>
+            <p>Έχετε απορίες ή χρειάζεστε προσφορά; Μη διστάσετε να επικοινωνήσετε μαζί μας χρησιμοποιώντας τη φόρμα παρακάτω.</p>
+            <form id="contactForm" action="../php/submitform.php" method="POST">
+                <label for="name">Το Όνομά σας</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Το Email σας</label>
+                <input type="email" id="email" name="email" required>
+                <label for="message">Μήνυμα</label>
+                <textarea id="message" name="message" required></textarea>
+                <button type="submit" class="btn">Υποβολή</button>
+            </form>
+            <div id="responseMessage" style="display:none; margin-top: 20px;"></div> <!-- Placeholder for response message -->
+
+            <!-- Leaflet Map Container -->
+            <div id="map" class="leaflet-map"></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-contact">
+                <p>ΑΝΤΩΝΕΛΟΣ Ν., ΒΕΤΟΥΛΑΣ Ε. Ε.Ε.</p>
+                <p>Νεοκλέους 44, Πάτρα</p>
+                <p>Τηλέφωνο: 2610 428930</p>
+                <p>Κινητό: 6936810320 & 693681314</p>
+                <p>Email: <a href="mailto:AV.anel4@yahoo.com">AV.anel4@yahoo.com</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet Map JavaScript -->
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([38.2466, 21.7356], 15); // Adjust zoom level for better view
+
+        // Add a tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Add a marker
+        const marker = L.marker([38.2466, 21.7356]).addTo(map);
+
+        // Bind a popup with directions link
+        marker.bindPopup(`
+            <div>
+                <p> Η διευθυνσή μας :  <b> Νεοκλέους 44, Πάτρα </b></p>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=ΝΕΟΚΛΕΟΥΣ+44,+ΠΑΤΡΑ" target="_blank">Λάβετε οδηγίες τοποθεσίας</a>
+            </div>
+        `);
+    </script>
+
+    <!-- AJAX Submission Script -->
+    <script>
+        document.getElementById("contactForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(this);
+            fetch('../php/submitform.php', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the response message
+                const responseMessage = document.getElementById("responseMessage");
+                responseMessage.style.display = "block";
+                responseMessage.innerText = data.message;
+                responseMessage.style.color = data.success ? "green" : "red"; // Change color based on success or failure
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>
